@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Time Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Video Time Calculator</h1>
+        <p>Add video files from your computer, and calculate the total time considering playback speed.</p>
+        
+        <div class="file-input">
+            <input type="file" id="fileInput" multiple accept="video/*">
+            <button onclick="addFiles()">Add Files from My Computer</button>
+        </div>
+        
+        <div class="video-list">
+            <h2>Selected Videos</h2>
+            <ul id="videoList"></ul>
+        </div>
+        
+        <div class="playback-speed">
+            <label for="playbackSpeed">Enter Playback Speed (e.g., 1.25, 2):</label>
+            <input type="number" id="playbackSpeed" step="0.1" min="0.1" value="1">
+        </div>
+
+        <div class="results">
+            <h2>Results</h2>
+            <p>Total Duration: <span id="totalDuration">0:00:00</span></p>
+            <p>Reduced Duration: <span id="reducedDuration">0:00:00</span></p>
+            <p>Time Saved: <span id="timeSaved">0:00:00</span></p>
+            <p>Current Time + Video Time: <span id="futureTime">--</span></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
