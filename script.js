@@ -2,7 +2,7 @@ let videos = [];
 
 function addFiles() {
     const fileInput = document.getElementById('fileInput');
-    fileInput.click(); // Programmatically trigger the file input click event
+    fileInput.click(); // Trigger the file input click event to open the file selection dialog
 }
 
 document.getElementById('fileInput').addEventListener('change', () => {
