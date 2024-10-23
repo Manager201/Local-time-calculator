@@ -2,6 +2,11 @@ let videos = [];
 
 function addFiles() {
     const fileInput = document.getElementById('fileInput');
+    fileInput.click(); // Programmatically trigger the file input click event
+}
+
+document.getElementById('fileInput').addEventListener('change', () => {
+    const fileInput = document.getElementById('fileInput');
     const files = Array.from(fileInput.files);
 
     files.forEach(file => {
@@ -16,7 +21,7 @@ function addFiles() {
             updateResults();
         });
     });
-}
+});
 
 function updateVideoList() {
     const videoList = document.getElementById('videoList');
