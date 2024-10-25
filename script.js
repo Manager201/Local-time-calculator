@@ -92,6 +92,8 @@ function updateLiveFutureTime() {
     const totalDuration = videos.reduce((sum, video) => sum + video.duration, 0);
     const playbackSpeed = parseFloat(document.getElementById('playbackSpeed').value) || 1;
     const reducedDuration = totalDuration / playbackSpeed;
+    
+    // Get the current time and add the reduced duration to it
     const currentTime = new Date();
     const liveFutureTime = new Date(currentTime.getTime() + reducedDuration * 1000);
     
@@ -106,5 +108,6 @@ function updateLiveFutureTime() {
         hour12: true 
     };
     
-    document.getElementById('liveFutureTime').textContent = liveFutureTime.toLocaleString('en-US', options);
+    // Update the live future time display
+    document.getElementById('futureTime').textContent = liveFutureTime.toLocaleString('en-US', options);
 }
