@@ -1,4 +1,5 @@
 let videos = [];
+let intervalId;
 
 function addFiles() {
     const fileInput = document.getElementById('fileInput');
@@ -25,9 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('playbackSpeed').addEventListener('input', updateResults);
-
-    // Start the live time update
-    setInterval(updateLiveFutureTime, 1000);
 });
 
 function updateVideoList() {
@@ -36,10 +34,9 @@ function updateVideoList() {
 
     videos.forEach((video, index) => {
         const listItem = document.createElement('li');
-        listItem.innerHTML = `
-            ${video.name} - ${formatTime(video.duration)} 
-            <button onclick="removeVideo(${index})">Remove</button>
-        `;
+        listItem.innerHTML = 
+            `${video.name} - ${formatTime(video.duration)} 
+            <button onclick="removeVideo(${index})">Remove</button>`;
         videoList.appendChild(listItem);
     });
 }
@@ -70,33 +67,23 @@ function formatTime(seconds) {
 }
 
 function updateFutureTime(duration) {
+    // Clear any existing interval
+    clearInterval(intervalId);
+
     const currentTime = new Date();
     const futureTime = new Date(currentTime.getTime() + duration * 1000);
     
-    const options = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit', 
-        hour12: true 
-    };
-    
-    document.getElementById('futureTime').textContent = futureTime.toLocaleString('en-US', options);
+    // Update the future time immediately
+    displayFutureTime(futureTime);
+
+    // Set an interval to update the future time every second
+    intervalId = setInterval(() => {
+        futureTime.setSeconds(futureTime.getSeconds() + 1);
+        displayFutureTime(futureTime);
+    }, 1000);
 }
 
-// Update live future time every second
-function updateLiveFutureTime() {
-    const totalDuration = videos.reduce((sum, video) => sum + video.duration, 0);
-    const playbackSpeed = parseFloat(document.getElementById('playbackSpeed').value) || 1;
-    const reducedDuration = totalDuration / playbackSpeed;
-    
-    // Get the current time and add the reduced duration to it
-    const currentTime = new Date();
-    const liveFutureTime = new Date(currentTime.getTime() + reducedDuration * 1000);
-    
+function displayFutureTime(futureTime) {
     const options = { 
         weekday: 'long', 
         year: 'numeric', 
@@ -107,7 +94,5 @@ function updateLiveFutureTime() {
         second: '2-digit', 
         hour12: true 
     };
-    
-    // Update the live future time display
-    document.getElementById('futureTime').textContent = liveFutureTime.toLocaleString('en-US', options);
+    document.getElementById('futureTime').textContent = futureTime.toLocaleString('en-US', options);
 }
