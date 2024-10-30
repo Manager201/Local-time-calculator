@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const files = Array.from(fileInput.files);
 
         files.forEach(file => {
-            const videoObj = { name: file.name, duration: 0 };
+            const videoObj = { name: file.name, duration: 0, playbackSpeed: 1 };
             const videoElement = document.createElement('video');
 
             videoElement.src = URL.createObjectURL(file);
@@ -24,8 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
-
-    document.getElementById('playbackSpeed').addEventListener('input', updateResults);
 });
 
 function updateVideoList() {
@@ -34,11 +32,24 @@ function updateVideoList() {
 
     videos.forEach((video, index) => {
         const listItem = document.createElement('li');
-        listItem.innerHTML = 
-            `${video.name} - ${formatTime(video.duration)} 
-            <button onclick="removeVideo(${index})">Remove</button>`;
+        
+        // Add an input field for each video's custom playback speed
+        listItem.innerHTML = `
+            ${video.name} - ${formatTime(video.duration)} 
+            <label>Playback Speed: 
+                <input type="number" value="${video.playbackSpeed}" min="0.1" step="0.1" 
+                    onchange="updatePlaybackSpeed(${index}, this.value)">
+            </label>
+            <button onclick="removeVideo(${index})">Remove</button>
+        `;
+        
         videoList.appendChild(listItem);
     });
+}
+
+function updatePlaybackSpeed(index, speed) {
+    videos[index].playbackSpeed = parseFloat(speed) || 1;
+    updateResults();
 }
 
 function removeVideo(index) {
@@ -48,9 +59,14 @@ function removeVideo(index) {
 }
 
 function updateResults() {
-    const totalDuration = videos.reduce((sum, video) => sum + video.duration, 0);
-    const playbackSpeed = parseFloat(document.getElementById('playbackSpeed').value) || 1;
-    const reducedDuration = totalDuration / playbackSpeed;
+    let totalDuration = 0;
+    let reducedDuration = 0;
+
+    videos.forEach(video => {
+        totalDuration += video.duration;
+        reducedDuration += video.duration / video.playbackSpeed;
+    });
+
     const timeSaved = totalDuration - reducedDuration;
 
     document.getElementById('totalDuration').textContent = formatTime(totalDuration);
@@ -67,16 +83,13 @@ function formatTime(seconds) {
 }
 
 function updateFutureTime(duration) {
-    // Clear any existing interval
     clearInterval(intervalId);
 
     const currentTime = new Date();
     const futureTime = new Date(currentTime.getTime() + duration * 1000);
-    
-    // Update the future time immediately
+
     displayFutureTime(futureTime);
 
-    // Set an interval to update the future time every second
     intervalId = setInterval(() => {
         futureTime.setSeconds(futureTime.getSeconds() + 1);
         displayFutureTime(futureTime);
