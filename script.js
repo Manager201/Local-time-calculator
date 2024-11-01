@@ -3,7 +3,7 @@ let intervalId;
 
 function addFiles() {
     const fileInput = document.getElementById('fileInput');
-    fileInput.click();
+    fileInput.click(); // Trigger the file input click event to open the file selection dialog
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const files = Array.from(fileInput.files);
 
         files.forEach(file => {
-            const videoObj = { name: file.name, duration: 0, playbackSpeed: 0 };
+            const videoObj = { name: file.name, duration: 0, playbackSpeed: 1 };
             const videoElement = document.createElement('video');
 
             videoElement.src = URL.createObjectURL(file);
@@ -33,10 +33,13 @@ function updateVideoList() {
     videos.forEach((video, index) => {
         const listItem = document.createElement('li');
         
-        // Button for setting custom playback speed
+        // Add an input field for each video's custom playback speed
         listItem.innerHTML = `
-            ${video.name} - ${formatTime(video.duration)}
-            <button onclick="setPlaybackSpeed(${index})">Set Speed</button>
+            ${video.name} - ${formatTime(video.duration)} 
+            <label>Playback Speed: 
+                <input type="number" value="${video.playbackSpeed}" min="0.1" step="0.1" 
+                    onchange="updatePlaybackSpeed(${index}, this.value)">
+            </label>
             <button onclick="removeVideo(${index})">Remove</button>
         `;
         
@@ -44,9 +47,8 @@ function updateVideoList() {
     });
 }
 
-function setPlaybackSpeed(index) {
-    const speed = prompt("Enter playback speed (e.g., 1 for normal, 2 for double speed):", videos[index].playbackSpeed);
-    videos[index].playbackSpeed = parseFloat(speed) || 0;  // Default to 0 if invalid input
+function updatePlaybackSpeed(index, speed) {
+    videos[index].playbackSpeed = parseFloat(speed) || 1;
     updateResults();
 }
 
@@ -62,7 +64,7 @@ function updateResults() {
 
     videos.forEach(video => {
         totalDuration += video.duration;
-        reducedDuration += video.duration / (video.playbackSpeed || 1); // Default to 1 if speed is 0
+        reducedDuration += video.duration / video.playbackSpeed;
     });
 
     const timeSaved = totalDuration - reducedDuration;
